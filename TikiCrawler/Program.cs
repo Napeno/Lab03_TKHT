@@ -7,7 +7,7 @@ using System.Globalization;
 using CsvHelper;
 using System.IO;
 using OpenQA.Selenium.Support.UI;
-
+using CsvHelper.Configuration.Attributes;
 
 namespace TikiCrawler
 {
@@ -48,10 +48,13 @@ namespace TikiCrawler
             {
                 public string? Name { get; set; }
                 public string? Price { get; set; }
+
+                [Name("Categories")]
                 public string? Brand { get; set; }
-                public string? Img { get; set; }
-                public string? Img2 { get; set; }
+                public string? Images { get; set; }
+                [Name("Type")]
                 public string? materialGlass { get; set; }
+                [Name("Length (cm)")]
                 public string? sizeFace { get; set; }
 
             }
@@ -210,15 +213,17 @@ namespace TikiCrawler
                         string productPrice = priceElement.GetAttribute("textContent");
                         string productImg = image1Element.GetAttribute("src");
                         string productImg2 = null;
+                        string listImg = productImg;
                         if (image1Element2 != null)
                         {
                             productImg2 = image1Element2.GetAttribute("src");
+                            listImg += ", " + productImg2;
                         }
                         string productmrlGlass = mrlGlassElement.GetAttribute("textContent");
                         string sizeFace = sizeFaceElement.GetAttribute("textContent");
 
 
-                        var productList = new Product { Name = productTitle, Brand = productBrand, Price = productPrice, Img = productImg, Img2 = productImg2 , materialGlass = productmrlGlass, sizeFace = sizeFace };
+                        var productList = new Product { Name = productTitle, Brand = productBrand, Price = productPrice, Images = listImg, materialGlass = productmrlGlass, sizeFace = sizeFace };
                         listProducts.Add(productList);
 
                         Console.WriteLine("DEBUG TITLE: " + productTitle);
@@ -232,9 +237,7 @@ namespace TikiCrawler
                         //string productPrice = browser.FindElements(By.CssSelector(".product-price__current-price"))[0].Text;
                         productPrice = Regex.Match(productPrice, "^[\\d|\\.|\\,]+").Value;
                         Console.WriteLine("DEBUG PRICE: " + productPrice);
-
-                        Console.WriteLine("DEBUG IMG1: " + productImg);
-                        Console.WriteLine("DEBUG IMG1: " + productImg2);
+                        Console.WriteLine("DEBUG ListImg: " + listImg);
                         Console.WriteLine("DEBUG Material Glass: " + productmrlGlass);
                         Console.WriteLine("DEBUG Size Face: " + sizeFace);
                         //Console.WriteLine("DEBUG IMG2: " + productImg2);
